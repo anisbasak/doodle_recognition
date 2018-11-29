@@ -194,7 +194,7 @@ start = dt.datetime.now()
 
 cwd = os.getcwd()
 DP_DIR = cwd
-INPUT_DIR = '../input/quickdraw-doodle-recognition/'
+INPUT_DIR = '..doodle_recognition/input/quickdraw-doodle-recognition/'
 
 BASE_SIZE = 256
 NCSVS = 3
@@ -207,7 +207,7 @@ def f2cat(filename: str) -> str:
 
 def list_all_categories():
     cwd = os.getcwd()
-    files = os.listdir(os.path.join(cwd, 'input/train_simplified'))
+    files = os.listdir(os.path.join(cwd, 'doodle_recognition/input/train_simplified'))
     return sorted([f2cat(f) for f in files], key=str.lower)
 
 
