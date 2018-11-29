@@ -1,2 +1,3 @@
-shuffled_output
+shuffled_output/*
 gs.png
+!shuffled_output/README.txt
