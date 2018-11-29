@@ -41,7 +41,7 @@ for y, cat in tqdm(enumerate(categories)):
     df['y'] = y
     df['cv'] = (df.key_id // 10 ** 7) % NCSVS
     for k in range(NCSVS):
-        filename = 'train_k{}.csv'.format(k)
+        filename = 'shuffled_output/train_k{}.csv'.format(k)
         df = df[df['recognized'] == True]
         chunk = df[df.cv == k]
         chunk = chunk.drop(['key_id'], axis=1)
@@ -52,7 +52,7 @@ for y, cat in tqdm(enumerate(categories)):
 
 
 for k in tqdm(range(NCSVS)):
-    filename = 'train_k{}.csv'.format(k)
+    filename = 'shuffled_output/train_k{}.csv'.format(k)
     if os.path.exists(filename):
         df = pd.read_csv(filename)
         df['rnd'] = np.random.rand(len(df))

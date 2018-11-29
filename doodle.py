@@ -268,7 +268,7 @@ def draw_cv2(raw_strokes, size=256, lw=6, time_color=True):
 def image_generator_xd(size, batchsize, ks, lw=6, time_color=True):
     while True:
         for k in np.random.permutation(ks):
-            filename = os.path.join(DP_DIR, 'train_k{}.csv.gz'.format(k))
+            filename = os.path.join(DP_DIR, 'shuffled_output/train_k{}.csv.gz'.format(k))
             for df in pd.read_csv(filename, chunksize=batchsize):
                 df['drawing'] = df['drawing'].apply(ast.literal_eval)
                 x = np.zeros((len(df), size, size, 1))
@@ -288,7 +288,7 @@ def df_to_image_array_xd(df, size, lw=6, time_color=True):
     return x
 
 
-valid_df = pd.read_csv(os.path.join(DP_DIR, 'train_k{}.csv.gz'.format(NCSVS - 1)), nrows=34000)
+valid_df = pd.read_csv(os.path.join(DP_DIR, 'shuffled_output/train_k{}.csv.gz'.format(NCSVS - 1)), nrows=34000)
 x_valid = df_to_image_array_xd(valid_df, size)
 y_valid = keras.utils.to_categorical(valid_df.y, num_classes=NCATS)
 print(x_valid.shape, y_valid.shape)
