@@ -8,8 +8,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 
 
-def knn_classifier(dataframe, data_target, data_test):
-    x_train, x_test, y_train, y_test = train_test_split(dataframe.images, dataframe.word, test_size=0.25)
+def knn_classifier(dataframe):
+    x_train, x_test, y_train, y_test = train_test_split(dataframe.drawing_one_dim, dataframe.word, test_size=0.25)
     knn_clf = KNeighborsClassifier(n_neighbors=3).fit(x_train, y_train)
 
     print("accuracy found is")
