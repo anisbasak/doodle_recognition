@@ -51,7 +51,7 @@ def attach_word(df):
 
 def knn_classifier(dataframe):
     x_train, x_test, y_train, y_test = train_test_split(dataframe.drawing_one_dim.tolist(), dataframe.word_enum, test_size=0.25)
-    knn_clf = KNeighborsClassifier(n_neighbors=7).fit(x_train, y_train)
+    knn_clf = KNeighborsClassifier(n_neighbors=20).fit(x_train, y_train)
     print('accuracy knn:', accuracy_score(y_test, knn_clf.predict(x_test)))
     filename = 'knn_model.sav'
     pickle.dump(knn_clf, open(filename, 'wb'))
@@ -88,22 +88,24 @@ def combine_data():
                 drawing = json_text['drawing']
                 df.loc[(index+1) * i] = [drawing, word]
                 print('file # {} line {}'.format(index, i))
-                if i == 10000:
+                if i == 5000:
                     break
 
 
     shuffle_df = shuffle_dataframe(df)
     final_df = attach_word(attach_one_dim_drawing(shuffle_df))
     print(final_df.shape)
-    final_df.to_pickle('final.pkl')
+    # final_df.to_hdf('final.hdf', key='final_df', mode='w')
+    # # final_df.to_pickle('final.pkl')
+    knn_classifier(final_df)
 
 
 def apply_knn():
-    df = pd.read_pickle('final.pkl')
+    df = pd.read_hdf('final.hdf', 'final_df')
     print(df.shape)
     knn_classifier(df)
 
 
 combine_data()
 
-apply_knn()
+# apply_knn()
