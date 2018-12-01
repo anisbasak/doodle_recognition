@@ -202,6 +202,7 @@ NCATS = 10
 np.random.seed(seed=1987)
 tf.set_random_seed(seed=1987)
 
+os.environ['KMP_DUPLICATE_LIB_OK'] = 'True'
 def f2cat(filename: str) -> str:
     return filename.split('.')[0]
 

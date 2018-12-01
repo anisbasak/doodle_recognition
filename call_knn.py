@@ -13,7 +13,7 @@ import pandas as pd
 import numpy as np
 import glob
 import json
-from sklearn.model_selection import train_test_splits
+from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.utils import shuffle
@@ -49,7 +49,7 @@ def attach_word(df):
 
 def knn_classifier(dataframe):
     x_train, x_test, y_train, y_test = train_test_split(dataframe.drawing_one_dim.tolist(), dataframe.word_enum, test_size=0.25)
-    knn_clf = KNeighborsClassifier(n_neighbors=7).fit(x_train, y_train)
+    knn_clf = KNeighborsClassifier(n_neighbors=3).fit(x_train, y_train)
 
     print("accuracy found is")
     print(accuracy_score(y_test, knn_clf.predict(x_test)))
@@ -68,9 +68,14 @@ def combine_data():
                 word = json_text['word']
                 drawing = json_text['drawing']
                 df.loc[(index+1) * i] = [drawing, word]
+                print('file # {} line {}'.format(index, i))
+                if i == 50000:
+                    break
+
 
     shuffle_df = shuffle_dataframe(df)
     final_df = attach_word(attach_one_dim_drawing(shuffle_df))
+    print(final_df.shape)
     final_df.to_pickle('final.pkl')
 
 
