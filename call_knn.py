@@ -17,6 +17,8 @@ from sklearn.model_selection import train_test_split
 from sklearn.metrics import accuracy_score
 from sklearn.neighbors import KNeighborsClassifier
 from sklearn.utils import shuffle
+import pickle
+from sklearn import datasets, svm, metrics
 
 
 type = ['apple', 'hammer', 'ladder', 'suitcase', 'sun', 'table', 'tree', 'triangle', 'umbrella', 'vase']
@@ -49,10 +51,27 @@ def attach_word(df):
 
 def knn_classifier(dataframe):
     x_train, x_test, y_train, y_test = train_test_split(dataframe.drawing_one_dim.tolist(), dataframe.word_enum, test_size=0.25)
-    knn_clf = KNeighborsClassifier(n_neighbors=3).fit(x_train, y_train)
+    knn_clf = KNeighborsClassifier(n_neighbors=7).fit(x_train, y_train)
+    print('accuracy knn:', accuracy_score(y_test, knn_clf.predict(x_test)))
+    filename = 'knn_model.sav'
+    pickle.dump(knn_clf, open(filename, 'wb'))
 
-    print("accuracy found is")
-    print(accuracy_score(y_test, knn_clf.predict(x_test)))
+    loaded_model = pickle.load(open(filename, 'rb'))
+    result = loaded_model.score(x_test, y_test)
+
+
+
+def svm_classifier(dataframe):
+    x_train, x_test, y_train, y_test = train_test_split(dataframe.drawing_one_dim.tolist(), dataframe.word_enum, test_size=0.25)
+    svm_clf = svm.SVC(gamma=0.001).fit(x_train,y_train)
+    y_pred = svm_clf.predict(x_test)
+    print("Classification report for classifier %s:\n%s\n", (svm_clf, metrics.classification_report(y_test, y_pred)))
+    print("Confusion matrix:\n%s", metrics.confusion_matrix(y_test, y_pred))
+    filename = 'svm_model.sav'
+    pickle.dump(svm_clf, open(filename, 'wb'))
+
+    loaded_model = pickle.load(open(filename, 'rb'))
+    result = loaded_model.score(x_test, y_test)
 
 
 def combine_data():
@@ -69,7 +88,7 @@ def combine_data():
                 drawing = json_text['drawing']
                 df.loc[(index+1) * i] = [drawing, word]
                 print('file # {} line {}'.format(index, i))
-                if i == 50000:
+                if i == 10000:
                     break
 
 

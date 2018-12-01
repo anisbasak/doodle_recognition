@@ -190,6 +190,8 @@ from tensorflow.keras.callbacks import EarlyStopping, ReduceLROnPlateau, ModelCh
 from tensorflow.keras.optimizers import Adam
 from tensorflow.keras.applications import MobileNet
 from tensorflow.keras.applications.mobilenet import preprocess_input
+import pickle
+
 start = dt.datetime.now()
 
 cwd = os.getcwd()
@@ -197,8 +199,8 @@ DP_DIR = cwd
 INPUT_DIR = '..doodle_recognition/input/quickdraw-doodle-recognition/'
 
 BASE_SIZE = 256
-NCSVS = 3
-NCATS = 10
+NCSVS = 100
+NCATS = 340
 np.random.seed(seed=1987)
 tf.set_random_seed(seed=1987)
 
@@ -243,8 +245,8 @@ def top_3_accuracy(y_true, y_pred):
 
 
 
-STEPS = 50
-EPOCHS = 5
+STEPS = 800
+EPOCHS = 16
 size = 64
 batchsize = 680
 
@@ -317,6 +319,11 @@ hist = model.fit_generator(
     validation_data=(x_valid, y_valid),
     callbacks = callbacks
 )
+
+filename = 'mobile_net_model.sav'
+pickle.dump(model, open(filename, 'wb'))
+
+loaded_model = pickle.load(open(filename, 'rb'))
 hists.append(hist)
 
 

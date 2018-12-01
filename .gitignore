@@ -1,3 +1,5 @@
 shuffled_output/*
 gs.png
 !shuffled_output/README.txt
+input/train_simplified
+.DS_Store

@@ -31,7 +31,7 @@ class Simplified():
 
 start = dt.datetime.now()
 s = Simplified('../input')
-NCSVS = 3
+NCSVS = 100
 categories = s.list_all_categories()
 print(len(categories))
 
