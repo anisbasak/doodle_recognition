@@ -20,9 +20,13 @@ from sklearn.utils import shuffle
 import pickle
 from sklearn import datasets, svm, metrics
 from sklearn.decomposition import PCA
-
+from sklearn.cluster import KMeans
 from matplotlib.colors import ListedColormap
 from sklearn.preprocessing import StandardScaler
+from matplotlib.cbook import get_sample_data
+
+#ffe6e6, #ff3333
+#ccffdd, #00cc44
 
 type = ['apple', 'hammer', 'ladder', 'suitcase', 'sun', 'table', 'tree', 'triangle', 'umbrella', 'vase']
 
@@ -31,9 +35,10 @@ type = ['apple', 'hammer', 'ladder', 'suitcase', 'sun', 'table', 'tree', 'triang
 def plot_decision_regions(X, y, classifier, test_idx=None, resolution=0.02):
     print('X', X)
 
-    cmap_light = ListedColormap(['#FFAAAA', '#AAFFAA', 'blue'])
-    cmap_bold = ListedColormap(['#FFAAAA', '#AAFFAA', 'red'])
+    cmap_light = ListedColormap(['tan', 'dimgrey', 'darkorchid', 'lightgreen', 'red', 'paleturquoise', 'darkorange','peru', 'hotpink'])
+    cmap_bold = ListedColormap(['moccasin', 'lightgrey', 'plum', 'darkseagreen', 'lightsalmon', 'lightseagreen', 'navajowhite', 'wheat', 'pink'])
     # plot the decision surface
+    # image_path = get_sample_data('knn.png')
     x1_min, x1_max = X[:, 0].min() - 1, X[:, 0].max() + 1
     x2_min, x2_max = X[:, 1].min() - 1, X[:, 1].max() + 1
     xx, yy = np.meshgrid(np.arange(x1_min, x1_max, resolution), np.arange(x2_min, x2_max, resolution))
@@ -47,7 +52,7 @@ def plot_decision_regions(X, y, classifier, test_idx=None, resolution=0.02):
 
     # Plot also the training points
     print("y", len(y))
-    plt.scatter(X[:, 0], X[:, 1], c=y, cmap=cmap_bold)
+    plt.scatter(X[:, 0], X[:, 1], c=np.array(y), cmap=cmap_bold)
     plt.xlim(xx.min(), xx.max())
     plt.ylim(yy.min(), yy.max())
     # plt.title("3-Class classification (k = %i, weights = '%s')"
@@ -142,9 +147,34 @@ def svm_classifier(dataframe):
     # result = loaded_model.score(x_test, y_test)
     plot_decision_regions(X_test_std, y_test, svm_clf)
 
+def kmeans_classifier(dataframe):
+    x_train, x_test, y_train, y_test = train_test_split(dataframe.iloc[:, 0:2], dataframe.target, test_size=0.25)
+    sc = StandardScaler()
+    sc.fit(x_train)
+    X_train_std = sc.transform(x_train)
+    X_test_std = sc.transform(x_test)
+    kmeans_clf = KMeans(n_clusters=2).fit(x_train)
+    y_pred = kmeans_clf.predict(x_test)
+    x_test = pd.DataFrame(x_test)
+    x_train = pd.DataFrame(x_train)
+    print('test_shape',x_test.shape)
+    print('train_shape',x_train.shape[1])
+    print("Classification report for classifier %s:\n%s\n", (kmeans_clf, metrics.classification_report(y_test, y_pred)))
+    print("Confusion matrix:\n%s", metrics.confusion_matrix(y_test, y_pred))
+    print('accuracy svm:', accuracy_score(y_test, kmeans_clf.predict(x_test)))
+    print('actual:', len(y_test.tolist()))
+    print('actual:', y_test.tolist())
+    print('predict:', kmeans_clf.predict(x_test.iloc[0].values.reshape(1, -1)))
+    # filename = 'svm_model.sav'
+    # pickle.dump(svm_clf, open(filename, 'wb'))
+    #
+    # loaded_model = pickle.load(open(filename, 'rb'))
+    # result = loaded_model.score(x_test, y_test)
+    plot_decision_regions(X_test_std, y_test, kmeans_clf)
+
 
 def combine_data():
-    path_to_json = 'rawdata2/'
+    path_to_json = 'rawdata/'
     allFiles = [pos_json for pos_json in os.listdir(path_to_json) if pos_json.endswith('.ndjson')]
 
     print('allFiles:', allFiles)
@@ -208,8 +238,9 @@ def combine_data():
     principalDf['target'] = final_df['word_enum']
     print(principalDf.shape)
     print(principalDf.dropna())
-    knn_classifier(principalDf.dropna())
+    # knn_classifier(principalDf.dropna())
     # svm_classifier(principalDf)
+    kmeans_classifier(principalDf)
 
 def apply_knn():
     df = pd.read_hdf('final.hdf', 'final_df')
